@@ -5,6 +5,7 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const compression = require('compression');
 
 const app = express();
 const port = Number.parseInt(process.env.PORT, 10) || 3000;
@@ -15,6 +16,7 @@ const parsedCorsOrigins = (process.env.CORS_ORIGINS || 'http://localhost:5500,ht
 	.filter(Boolean);
 
 app.use(helmet());
+app.use(compression());
 
 app.use(
 	cors({
@@ -124,6 +126,14 @@ function calculateMonthlyPayment(principal, annualRate, years) {
 		(Math.pow(1 + monthlyRate, numberOfPayments) - 1)
 	);
 }
+
+app.get('/healthz', (req, res) => {
+	res.json({
+		status: 'ok',
+		timestamp: new Date().toISOString(),
+		uptimeSeconds: Math.floor(process.uptime()),
+	});
+});
 
 app.get('/api/affordability', async (req, res) => {
 	const { zipCode } = req.query;

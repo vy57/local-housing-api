@@ -29,15 +29,21 @@ npm start
 
 The API listens on the port from `PORT`, or `3000` if it is not set.
 
-## Security defaults
+## Security and performance defaults
 
 This API now includes:
 
 - `helmet` for HTTP security headers
 - strict CORS allowlist via `CORS_ORIGINS`
 - `express-rate-limit` (100 requests / 15 minutes per IP) on `/api/*`
+- `compression` middleware for compressed HTTP responses
+- `GET /healthz` endpoint for uptime checks
 
 ## API
+
+### `GET /healthz`
+
+Simple health check endpoint returning service status, timestamp, and uptime.
 
 ### `GET /api/affordability`
 
