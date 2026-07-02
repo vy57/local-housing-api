@@ -2,9 +2,12 @@ require('dotenv').config();
 
 const axios = require('axios');
 const express = require('express');
+const cors = require('cors');
 
 const app = express();
 const port = Number.parseInt(process.env.PORT, 10) || 3000;
+
+app.use(cors());
 
 const mockedData = {
 	medianHomePrice: 2200000,
@@ -109,7 +112,7 @@ app.get('/api/affordability', async (req, res) => {
 		mortgageRate,
 		mockedData.loanTermYears
 	);
-	const annualPropertyTax = (mockedData.medianHomePrice * 0.7) * (mockedData.millRate / 1000);
+	const annualPropertyTax = mockedData.medianHomePrice * 0.7 * (mockedData.millRate / 1000);
 	const monthlyPropertyTax = annualPropertyTax / 12;
 	const annualPMI = mockedData.downPaymentRate < 0.2 ? loanAmount * 0.0075 : 0;
 	const monthlyPMI = annualPMI / 12;
