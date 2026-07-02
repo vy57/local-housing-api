@@ -3,11 +3,44 @@ require('dotenv').config();
 const axios = require('axios');
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 
 const app = express();
 const port = Number.parseInt(process.env.PORT, 10) || 3000;
 
-app.use(cors());
+const parsedCorsOrigins = (process.env.CORS_ORIGINS || 'http://localhost:5500,http://127.0.0.1:5500')
+	.split(',')
+	.map((origin) => origin.trim())
+	.filter(Boolean);
+
+app.use(helmet());
+
+app.use(
+	cors({
+		origin(origin, callback) {
+			if (!origin) {
+				return callback(null, true);
+			}
+
+			if (parsedCorsOrigins.includes(origin)) {
+				return callback(null, true);
+			}
+
+			return callback(new Error('Not allowed by CORS'));
+		},
+	})
+);
+
+const apiLimiter = rateLimit({
+	windowMs: 15 * 60 * 1000,
+	max: 100,
+	standardHeaders: true,
+	legacyHeaders: false,
+	message: { error: 'Too many requests, please try again later.' },
+});
+
+app.use('/api', apiLimiter);
 
 const mockedData = {
 	medianHomePrice: 2200000,

@@ -16,6 +16,7 @@ Create a `.env` file in the project root with these values:
 FRED_API_KEY=your_fred_api_key
 CENSUS_API_KEY=your_census_api_key
 PORT=3000
+CORS_ORIGINS=http://localhost:5500,http://127.0.0.1:5500
 ```
 
 ## Run
@@ -27,6 +28,14 @@ npm start
 ```
 
 The API listens on the port from `PORT`, or `3000` if it is not set.
+
+## Security defaults
+
+This API now includes:
+
+- `helmet` for HTTP security headers
+- strict CORS allowlist via `CORS_ORIGINS`
+- `express-rate-limit` (100 requests / 15 minutes per IP) on `/api/*`
 
 ## API
 
